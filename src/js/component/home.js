@@ -23,17 +23,67 @@ export class Home extends React.Component {
 	}
 
 	controlaSubmit(evento) {
-		const nuevaTarea = this.state.tareas.slice();
-		nuevaTarea.push(this.state.value);
-		this.setState({ tareas: nuevaTarea });
-		evento.preventDefault();
-		this.setState({ value: "" });
+		if (this.state.value.length > 0) {
+			const nuevaTarea = this.state.tareas.slice();
+			nuevaTarea.push(this.state.value);
+			this.setState({ tareas: nuevaTarea });
+			evento.preventDefault();
+			this.setState({ value: "" });
+			const todos = nuevaTarea.map(
+				item => new Object({ label: item, done: false })
+			);
+			fetch("https://assets.breatheco.de/apis/fake/todos/user/tata", {
+				method: "PUT",
+				body: JSON.stringify(todos),
+				headers: {
+					"Content-Type": "application/json"
+				}
+			})
+				.then(resp => {
+					console.log(resp.ok); // will be true if the response is successfull
+					console.log(resp.status); // the status code = 200 or code = 400 etc.
+					return resp.json(); // (returns promise) will try to parse the result as json as return a promise that you can .then for results
+				})
+				.then(data => {
+					//here is were your code should start after the fetch finishes
+					console.log(data); //this will print on the console the exact object received from the server
+				})
+				.catch(error => {
+					//error handling
+					console.log(error);
+				});
+		} else {
+			evento.preventDefault();
+		}
 	}
 
 	eliminaTarea(index) {
 		let tareas = this.state.tareas.slice();
 		tareas.splice(index, 1);
 		this.setState({ tareas: tareas });
+		const todos = tareas.map(
+			item => new Object({ label: item, done: false })
+		);
+		fetch("https://assets.breatheco.de/apis/fake/todos/user/tata", {
+			method: "PUT",
+			body: JSON.stringify(todos),
+			headers: {
+				"Content-Type": "application/json"
+			}
+		})
+			.then(resp => {
+				console.log(resp.ok); // will be true if the response is successfull
+				console.log(resp.status); // the status code = 200 or code = 400 etc.
+				return resp.json(); // (returns promise) will try to parse the result as json as return a promise that you can .then for results
+			})
+			.then(data => {
+				//here is were your code should start after the fetch finishes
+				console.log(data); //this will print on the console the exact object received from the server
+			})
+			.catch(error => {
+				//error handling
+				console.log(error);
+			});
 	}
 
 	eliminaTodo() {
